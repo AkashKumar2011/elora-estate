@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Bed, Bath, IndianRupee, Share2, Heart, Calendar, Check } from 'lucide-react';
+import { MapPin, IndianRupee, Share2, Heart, Calendar, Check, Compass, Sparkles } from 'lucide-react';
 
 export default function PropertyCard({
   property,
@@ -51,126 +51,135 @@ export default function PropertyCard({
 
   return (
     <div
-      className={`group bg-white rounded-md border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col ${className}`}
+      className={`group bg-[#FFFFFF] rounded-sm border border-[#E4E3DD] hover:border-[#B8860B]/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col justify-between overflow-hidden ${className}`}
     >
-      {/* Property Thumbnail & Overlay Badges */}
-      <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
-        {imageSrc ? (
-          <img
-            src={imageSrc}
-            alt={title || 'Property thumbnail'}
-            onError={() => setImgError(true)}
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-100 p-4 text-center">
-            <span className="font-serif text-sm font-medium text-slate-500">EloraEstate Curated</span>
-            <span className="text-xs text-slate-400">Photo verification in progress</span>
-          </div>
-        )}
-
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-          <span className="bg-slate-950/80 backdrop-blur text-amber-300 font-mono text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded">
-            {type || 'Rental'}
-          </span>
-          {bhk && (
-            <span className="bg-white/95 text-slate-800 font-mono text-[11px] font-semibold px-2 py-0.5 rounded shadow-sm">
-              {bhk} BHK
-            </span>
+      <div>
+        {/* Visual Container */}
+        <div className="relative aspect-[16/10] bg-[#F3F2EE] overflow-hidden">
+          {imageSrc ? (
+            <img
+              src={imageSrc}
+              alt={title || 'Property thumbnail'}
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+              loading="lazy"
+            />
+          ) : (
+            /* Tasteful Architectural Fallback */
+            <div className="w-full h-full flex flex-col items-center justify-center text-[#8A8880] p-6 text-center bg-gradient-to-b from-[#F3F2EE] to-[#E9E8E2]">
+              <div className="w-10 h-10 rounded-full bg-[#FFFFFF] border border-[#D6D4CC] flex items-center justify-center mb-2 text-[#B8860B]">
+                <Compass className="w-5 h-5" />
+              </div>
+              <span className="font-serif text-sm font-semibold text-[#12171A]">EloraEstate Curated</span>
+              <span className="text-[11px] font-mono text-[#7A7870] mt-0.5">Photographs on physical visit</span>
+            </div>
           )}
-        </div>
 
-        {/* Quick Action Overlay (Shortlist / Share) */}
-        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={handleShareClick}
-            className="p-1.5 rounded-full bg-white/90 text-slate-700 hover:text-amber-700 shadow-sm transition-colors"
-            title="Share property link"
-            aria-label="Share property"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
-          </button>
-          {onAddToCart && (
+          {/* Type & BHK Badges */}
+          <div className="absolute top-3 left-3 flex items-center gap-1.5">
+            <span className="bg-[#12171A]/90 backdrop-blur-md text-[#B8860B] font-mono text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-sm">
+              {type || 'Rental'}
+            </span>
+            {bhk && (
+              <span className="bg-[#FFFFFF]/95 backdrop-blur-md text-[#12171A] font-mono text-[10px] font-bold px-2 py-0.5 rounded-sm shadow-sm">
+                {bhk} BHK
+              </span>
+            )}
+          </div>
+
+          {/* Action Overlay */}
+          <div className="absolute top-3 right-3 flex items-center gap-1.5">
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onAddToCart(property);
-              }}
-              className={`p-1.5 rounded-full shadow-sm transition-colors ${
-                isShortlisted ? 'bg-rose-50 text-rose-600' : 'bg-white/90 text-slate-700 hover:text-rose-600'
-              }`}
-              title="Shortlist property"
-              aria-label="Shortlist property"
+              onClick={handleShareClick}
+              className="p-1.5 rounded-sm bg-[#FFFFFF]/90 hover:bg-[#FFFFFF] text-[#3B3A36] hover:text-[#B34728] shadow-sm transition-colors"
+              title="Share listing link"
+              aria-label="Share property"
             >
-              <Heart className={`w-3.5 h-3.5 ${isShortlisted ? 'fill-current' : ''}`} />
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-700" /> : <Share2 className="w-3.5 h-3.5" />}
             </button>
-          )}
+            {onAddToCart && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onAddToCart(property);
+                }}
+                className={`p-1.5 rounded-sm shadow-sm transition-colors ${
+                  isShortlisted 
+                    ? 'bg-[#B34728] text-white' 
+                    : 'bg-[#FFFFFF]/90 hover:bg-[#FFFFFF] text-[#3B3A36] hover:text-[#B34728]'
+                }`}
+                title="Shortlist property"
+                aria-label="Shortlist property"
+              >
+                <Heart className={`w-3.5 h-3.5 ${isShortlisted ? 'fill-current' : ''}`} />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Property Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <div className="flex items-baseline justify-between gap-2 mb-1.5">
-            <div className="flex items-center text-amber-800 font-mono text-lg font-bold">
+        {/* Content Body */}
+        <div className="p-4 sm:p-5">
+          {/* Price Header */}
+          <div className="flex items-baseline justify-between gap-2 mb-2">
+            <div className="flex items-baseline text-[#12171A] font-mono text-xl font-bold tracking-tight">
               <IndianRupee className="w-4 h-4 inline stroke-[2.5]" />
-              <span>{displayPrice ? Number(displayPrice).toLocaleString('en-IN') : 'Contact'}</span>
-              <span className="text-xs font-normal text-slate-500 ml-1">/ month</span>
+              <span>{displayPrice ? Number(displayPrice).toLocaleString('en-IN') : 'Contact Desk'}</span>
+              <span className="text-xs font-normal text-[#7A7870] ml-1">/ mo</span>
             </div>
             {deposit && (
-              <span className="text-[11px] text-slate-500 font-mono">
+              <span className="text-[11px] text-[#7A7870] font-mono">
                 Dep: ₹{Number(deposit).toLocaleString('en-IN')}
               </span>
             )}
           </div>
 
-          <h3 className="font-semibold text-slate-900 text-sm line-clamp-1 mb-1 group-hover:text-amber-800 transition-colors">
-            {title || `${bhk ? `${bhk} BHK ` : ''}${type || 'Apartment'}`}
+          {/* Title & Micro-Location */}
+          <h3 className="font-serif text-base font-bold text-[#12171A] line-clamp-1 group-hover:text-[#B34728] transition-colors">
+            {title || `${bhk ? `${bhk} BHK ` : ''}${type || 'Residence'}`}
           </h3>
 
-          <p className="text-xs text-slate-600 flex items-center gap-1 line-clamp-1 mb-3">
-            <MapPin className="w-3 h-3 text-amber-600 shrink-0" />
+          <p className="text-xs text-[#5C5A52] flex items-center gap-1.5 mt-1 line-clamp-1">
+            <MapPin className="w-3.5 h-3.5 text-[#B8860B] shrink-0" />
             <span>{location ? `${location}, ${city}` : city}</span>
           </p>
 
-          {/* Characteristic Chips */}
-          <div className="flex flex-wrap gap-1.5 py-2 border-t border-slate-100 text-[11px] text-slate-600 font-mono">
+          {/* Quick Specifications */}
+          <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#F3F2EE] text-[11px] font-mono text-[#5C5A52]">
             {furnishing && (
-              <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-700">
+              <span className="bg-[#F3F2EE] px-2 py-0.5 rounded-sm text-[#3B3A36]">
                 {furnishing}
               </span>
             )}
             {availabilityStatus && (
-              <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">
+              <span className="bg-emerald-50 text-emerald-800 border border-emerald-200/60 px-2 py-0.5 rounded-sm">
                 {availabilityStatus}
               </span>
             )}
           </div>
         </div>
+      </div>
 
-        {/* Primary Card CTAs */}
-        <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
-          <Link
-            to={`/properties/${propId}`}
-            className="flex-1 text-center py-2 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors"
+      {/* Card Conversion Actions */}
+      <div className="px-4 sm:px-5 pb-4 pt-2 flex items-center gap-2">
+        <Link
+          to={`/properties/${propId}`}
+          className="flex-1 text-center py-2 text-xs font-mono font-semibold uppercase tracking-wider rounded-sm bg-[#F3F2EE] hover:bg-[#E4E3DD] text-[#12171A] transition-colors"
+        >
+          View Details
+        </Link>
+        {onScheduleVisit && (
+          <button
+            type="button"
+            onClick={() => onScheduleVisit(property)}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-xs font-mono font-semibold uppercase tracking-wider rounded-sm bg-[#12171A] hover:bg-[#B34728] text-white transition-colors shadow-sm"
           >
-            View Details
-          </Link>
-          {onScheduleVisit && (
-            <button
-              type="button"
-              onClick={() => onScheduleVisit(property)}
-              className="flex-1 inline-flex items-center justify-center gap-1 py-2 text-xs font-semibold rounded bg-slate-900 hover:bg-slate-800 text-amber-400 transition-colors shadow-sm"
-            >
-              <Calendar className="w-3 h-3" />
-              <span>Visit</span>
-            </button>
-          )}
-        </div>
+            <Calendar className="w-3.5 h-3.5 text-[#B8860B]" />
+            <span>Visit</span>
+          </button>
+        )}
       </div>
     </div>
   );
