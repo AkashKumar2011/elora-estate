@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-seafog-100 text-basalt font-sans antialiased;
+}
+
+h1, h2, h3 {
+  @apply font-display;
+}
+
+/* Visible keyboard focus everywhere — quality floor per design guidance,
+   not just on interactive elements Tailwind happens to style by default. */
+:focus-visible {
+  outline: 2px solid theme('colors.laterite.DEFAULT');
+  outline-offset: 2px;
+}
+
+/* Tabular figures for anything money/mobile-number shaped, so columns of
+   numbers actually line up — the whole point of using a mono face for them. */
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
