@@ -1,164 +1,40 @@
 import React, { useState } from 'react';
-import { MessageSquare, Star, Send, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MessageSquare, ShieldCheck } from 'lucide-react';
 
 export default function FeedbackPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    experienceType: 'tenant_search',
-    rating: 5,
-    message: '',
-  });
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    // Preserves frontend state and simulates graceful submission
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-    }, 600);
-  };
-
   return (
-    <div className="space-y-12 sm:space-y-16 pb-20">
-      {/* Header */}
-      <section className="bg-[#12171A] text-white pt-14 pb-18 px-4 sm:px-6 lg:px-8 border-b border-[#2A3138]">
-        <div className="max-w-3xl mx-auto text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border border-[#B8860B]/40 bg-[#B8860B]/10 text-[#B8860B] text-xs font-mono tracking-wider uppercase">
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>Platform Experience</span>
+    <div className="bg-[#F7F3EC]">
+      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className="flex flex-col justify-center">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[#C55F26]">Community</p>
+          <h1 className="font-display text-6xl font-black leading-tight text-stone-950">Help us improve <span className="italic text-[#C55F26]">EloraEstate</span></h1>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-stone-600">Your insights help us refine the property search journey for everyone in Mumbai. Share a suggestion, report an issue, or tell us about your experience.</p>
+        </div>
+        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=85" alt="EloraEstate feedback" className="h-full min-h-[340px] rounded-2xl object-cover shadow-xl" />
+      </section>
+
+      <section className="bg-[#EEE8DF] py-16">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-10">
+            {submitted ? <div className="py-12 text-center"><MessageSquare className="mx-auto h-10 w-10 text-[#C55F26]" /><h2 className="mt-4 font-display text-3xl font-bold">Thank you.</h2><p className="mt-2 text-stone-600">Your feedback has been received.</p><button onClick={() => setSubmitted(false)} className="mt-6 text-sm font-bold text-[#C55F26]">Send another response</button></div> : (
+              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+                <h2 className="text-center font-display text-3xl font-bold">Share Your Thoughts</h2>
+                <p className="mt-2 text-center text-sm text-stone-600">Share feedback, a property requirement, or a question about renting or buying in Mumbai.</p>
+                <div className="mt-8 grid gap-4 sm:grid-cols-2"><input required placeholder="Full Name" className="h-11 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm" /><input required placeholder="Email or Mobile" className="h-11 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm" /></div>
+                <select className="mt-4 h-11 w-full rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm">{['Website Feedback','Property Requirement','Rent Enquiry','Buy Enquiry','Owner Enquiry','Broker/Caretaker Enquiry','Report an Issue','General Question'].map((o)=><option key={o}>{o}</option>)}</select>
+                <textarea required rows={6} placeholder="How can we help you today?" className="mt-4 w-full rounded-md border border-stone-200 bg-[#F7F3EC] p-3 text-sm" />
+                <button className="mt-5 w-full rounded-md bg-[#C55F26] px-5 py-3 text-sm font-bold text-white">Submit Feedback</button>
+              </form>
+            )}
           </div>
-
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-white">
-            Client & Partner Feedback
-          </h1>
-
-          <p className="text-xs sm:text-sm text-[#A6A49C] leading-relaxed">
-            Your feedback directly guides how we refine property discovery, visit scheduling, and broker coordination.
-          </p>
         </div>
       </section>
 
-      {/* Form Container */}
-      <section className="max-w-xl mx-auto px-4 sm:px-6">
-        <div className="bg-[#FFFFFF] p-6 sm:p-8 rounded-sm border border-[#E4E3DD] shadow-sm">
-          {submitted ? (
-            <div className="text-center py-8 space-y-3">
-              <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h3 className="font-serif text-lg font-bold text-[#12171A]">Thank You for Your Feedback</h3>
-              <p className="text-xs text-[#5C5A52] max-w-sm mx-auto">
-                We review every client submission to ensure our Mumbai rental discovery and visit operations remain seamless.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSubmitted(false);
-                  setFormData({ name: '', email: '', experienceType: 'tenant_search', rating: 5, message: '' });
-                }}
-                className="mt-4 px-4 py-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#B34728] hover:underline"
-              >
-                Submit another response
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Anand Mehta"
-                  className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="anand@example.com"
-                  className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-                  Interaction Context
-                </label>
-                <select
-                  value={formData.experienceType}
-                  onChange={(e) => setFormData({ ...formData, experienceType: e.target.value })}
-                  className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none"
-                >
-                  <option value="tenant_search">Tenant Property Search</option>
-                  <option value="visit_scheduling">Physical Visit Coordination</option>
-                  <option value="owner_listing">Property Owner Listing</option>
-                  <option value="broker_portal">Broker Collaboration</option>
-                  <option value="general">General Platform Experience</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-                  Overall Rating
-                </label>
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, rating: star })}
-                      className={`p-2 rounded-sm border transition-all text-xs font-mono font-bold ${
-                        formData.rating >= star
-                          ? 'border-[#B8860B] bg-[#B8860B]/10 text-[#B8860B]'
-                          : 'border-[#E4E3DD] bg-[#FBFBF9] text-[#7A7870]'
-                      }`}
-                    >
-                      {star} ★
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-                  Your Observations & Comments
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Share details about what worked smoothly or where we can improve..."
-                  className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none leading-relaxed"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-[#12171A] hover:bg-[#B34728] text-white text-xs font-mono font-semibold uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 transition-colors shadow-sm disabled:opacity-50"
-              >
-                <Send className="w-3.5 h-3.5 text-[#B8860B]" />
-                <span>{loading ? 'Submitting...' : 'Submit Feedback'}</span>
-              </button>
-            </form>
-          )}
-        </div>
+      <section className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-2 lg:px-8">
+        <div className="rounded-2xl border border-[#C55F26]/30 bg-white p-8"><ShieldCheck className="h-6 w-6 text-[#C55F26]" /><h2 className="mt-4 font-display text-2xl font-bold">Our Commitment</h2><p className="mt-3 leading-7 text-stone-600">We review submissions to improve property discovery, listings and visit coordination. Your contact details are not shared without consent.</p></div>
+        <div className="flex flex-col justify-center text-center md:text-left"><h2 className="font-display text-4xl font-bold">Ready to find your next Mumbai home?</h2><div className="mt-6 flex justify-center gap-3 md:justify-start"><Link to="/" className="rounded-md border border-stone-300 px-5 py-3 text-sm font-bold">Back to Home</Link><Link to="/properties" className="rounded-md bg-[#C55F26] px-5 py-3 text-sm font-bold text-white">Explore Properties</Link></div></div>
       </section>
     </div>
   );

@@ -34,6 +34,7 @@ export default function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="*" element={<HomePage />} />
       </Route>
 
       {/* Standalone — no site chrome, so the login flow stays focused */}
@@ -132,8 +133,6 @@ export default function App() {
           }
         />
       </Route>
-
-      <Route path="*" element={<HomePage />} />
     </Routes>
   );
 }

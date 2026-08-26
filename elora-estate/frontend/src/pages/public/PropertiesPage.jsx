@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Filter, Search, RotateCcw, Building2 } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { RotateCcw, Search, SlidersHorizontal } from 'lucide-react';
 import PropertyCard from '../../components/PropertyCard';
 import { listPublicProperties } from '../../api/properties';
 
@@ -8,186 +8,111 @@ export default function PropertiesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [purpose, setPurpose] = useState(searchParams.get('purpose') || 'rent');
+  const [filters, setFilters] = useState({
+    location: searchParams.get('location') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    bhk: searchParams.get('bhk') || '',
+    type: searchParams.get('type') || '',
+    furnishing: searchParams.get('furnishing') || '',
+    availability: searchParams.get('availability') || '',
+    tenantPreference: searchParams.get('tenantPreference') || '',
+    area: searchParams.get('area') || '',
+    possession: searchParams.get('possession') || '',
+  });
 
-  const [locationInput, setLocationInput] = useState(searchParams.get('location') || '');
-  const [bhkFilter, setBhkFilter] = useState(searchParams.get('bhk') || '');
-  const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || '');
-  const [maxBudget, setMaxBudget] = useState(searchParams.get('maxPrice') || '');
-
-  useEffect(() => {
-    async function fetchListings() {
-      try {
-        setLoading(true);
-        const params = {
-          location: searchParams.get('location') || undefined,
-          bhk: searchParams.get('bhk') || undefined,
-          type: searchParams.get('type') || undefined,
-          maxPrice: searchParams.get('maxPrice') || undefined,
-        };
-        const res = await listPublicProperties(params);
-        const list = res?.data?.properties || res?.properties || res?.data || [];
-        setProperties(Array.isArray(list) ? list : []);
-      } catch (err) {
-        console.error('Failed to load listings:', err);
-      } finally {
-        setLoading(false);
-      }
+  const loadListings = async () => {
+    try {
+      setLoading(true);
+      setError(false);
+      const params = { purpose, ...filters };
+      Object.keys(params).forEach((k) => !params[k] && delete params[k]);
+      const res = await listPublicProperties(params);
+      const list = res?.data?.properties || res?.properties || res?.data || [];
+      const arr = Array.isArray(list) ? list : [];
+      setProperties(arr.filter((p) => {
+        const raw = String(p?.purpose || p?.listingType || p?.transactionType || '').toLowerCase();
+        if (!raw) return true;
+        return purpose === 'buy' ? raw.includes('sale') || raw.includes('buy') : !raw.includes('sale') && !raw.includes('buy');
+      }));
+    } catch (err) {
+      console.error('Failed to load listings:', err);
+      setError(true);
+      setProperties([]);
+    } finally {
+      setLoading(false);
     }
-    fetchListings();
-  }, [searchParams]);
+  };
+
+  useEffect(() => { loadListings(); }, [searchParams]);
 
   const applyFilters = (e) => {
-    if (e) e.preventDefault();
-    const newParams = new URLSearchParams();
-    if (locationInput.trim()) newParams.set('location', locationInput.trim());
-    if (bhkFilter) newParams.set('bhk', bhkFilter);
-    if (typeFilter) newParams.set('type', typeFilter);
-    if (maxBudget) newParams.set('maxPrice', maxBudget);
-    setSearchParams(newParams);
+    e?.preventDefault();
+    const next = new URLSearchParams();
+    next.set('purpose', purpose);
+    Object.entries(filters).forEach(([k, v]) => { if (v) next.set(k, v); });
+    setSearchParams(next);
   };
 
-  const handleClearFilters = () => {
-    setLocationInput('');
-    setBhkFilter('');
-    setTypeFilter('');
-    setMaxBudget('');
-    setSearchParams(new URLSearchParams());
+  const clearFilters = () => {
+    setPurpose('rent');
+    setFilters({ location: '', maxPrice: '', bhk: '', type: '', furnishing: '', availability: '', tenantPreference: '', area: '', possession: '' });
+    setSearchParams(new URLSearchParams({ purpose: 'rent' }));
   };
+
+  const update = (key) => (e) => setFilters((prev) => ({ ...prev, [key]: e.target.value }));
+  const activeChips = Object.entries(filters).filter(([, v]) => Boolean(v));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-bold text-[#12171A]">Mumbai Property Directory</h1>
-        <p className="text-xs font-mono text-[#7A7870] mt-1">
-          Explore curated residential rentals across South Mumbai and prime micro-markets
-        </p>
-      </div>
-
-      {/* Filter Control Bar */}
-      <form
-        onSubmit={applyFilters}
-        className="bg-[#FFFFFF] p-4 rounded-sm border border-[#E4E3DD] shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end"
-      >
-        <div>
-          <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-            Neighborhood
-          </label>
-          <input
-            type="text"
-            placeholder="e.g. Worli, Bandra"
-            value={locationInput}
-            onChange={(e) => setLocationInput(e.target.value)}
-            className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none"
-          />
+    <div className="bg-[#F7F3EC]">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="font-display text-4xl font-bold text-stone-950">Explore Mumbai Properties</h1>
+          <p className="mt-2 text-stone-600">Search rental homes and flats for sale across Mumbai localities.</p>
         </div>
 
-        <div>
-          <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-            Configuration
-          </label>
-          <select
-            value={bhkFilter}
-            onChange={(e) => setBhkFilter(e.target.value)}
-            className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none"
-          >
-            <option value="">All Configurations</option>
-            <option value="1">1 BHK</option>
-            <option value="2">2 BHK</option>
-            <option value="3">3 BHK</option>
-            <option value="4">4+ BHK</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-            Property Format
-          </label>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none"
-          >
-            <option value="">All Formats</option>
-            <option value="Flat">Flat / Apartment</option>
-            <option value="PG">Executive PG</option>
-            <option value="Single">Single Occupancy</option>
-            <option value="Shared">Shared Home</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-[11px] font-mono font-semibold uppercase text-[#5C5A52] mb-1">
-            Max Budget (₹/mo)
-          </label>
-          <input
-            type="number"
-            placeholder="e.g. 75000"
-            value={maxBudget}
-            onChange={(e) => setMaxBudget(e.target.value)}
-            className="w-full text-xs p-2.5 bg-[#FBFBF9] border border-[#E4E3DD] rounded-sm focus:border-[#B34728] focus:outline-none"
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="flex-1 py-2.5 bg-[#12171A] hover:bg-[#B34728] text-white text-xs font-mono font-semibold uppercase tracking-wider rounded-sm flex items-center justify-center gap-1.5 transition-colors shadow-sm"
-          >
-            <Filter className="w-3.5 h-3.5 text-[#B8860B]" />
-            <span>Apply</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleClearFilters}
-            className="p-2.5 bg-[#F3F2EE] hover:bg-[#E4E3DD] text-[#5C5A52] rounded-sm text-xs transition-colors"
-            title="Reset Filters"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-        </div>
-      </form>
-
-      {/* Results Header */}
-      <div className="flex items-center justify-between text-xs font-mono text-[#7A7870]">
-        <span>Showing {properties.length} available {properties.length === 1 ? 'property' : 'properties'}</span>
-      </div>
-
-      {/* Grid or Empty State */}
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div key={n} className="bg-[#FFFFFF] rounded-sm border border-[#E4E3DD] p-4 space-y-3 animate-pulse">
-              <div className="aspect-[16/10] bg-[#E4E3DD] rounded-sm" />
-              <div className="h-4 bg-[#E4E3DD] rounded w-1/3" />
-              <div className="h-4 bg-[#E4E3DD] rounded w-2/3" />
-            </div>
-          ))}
-        </div>
-      ) : properties.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map((prop) => (
-            <PropertyCard key={prop._id || prop.id} property={prop} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-20 bg-[#FFFFFF] rounded-sm border border-[#E4E3DD] p-8 space-y-4">
-          <div className="w-12 h-12 rounded-full bg-[#F3F2EE] text-[#B8860B] flex items-center justify-center mx-auto">
-            <Search className="w-6 h-6" />
+        <form onSubmit={applyFilters} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="mx-auto mb-6 flex w-full max-w-xs rounded-full bg-[#EEE8DF] p-1 text-sm font-bold">
+            {['rent', 'buy'].map((tab) => (
+              <button key={tab} type="button" onClick={() => setPurpose(tab)} className={`flex-1 rounded-full px-4 py-2 capitalize transition ${purpose === tab ? 'bg-white text-[#C55F26] shadow-sm' : 'text-stone-400 hover:text-stone-900'}`}>{tab}</button>
+            ))}
           </div>
-          <div>
-            <h3 className="font-serif text-lg font-bold text-[#12171A]">No properties match these criteria</h3>
-            <p className="text-xs text-[#7A7870] mt-1 max-w-sm mx-auto">
-              Adjust your budget threshold or broaden your location query to see available Mumbai inventory.
-            </p>
+          <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-6">
+            <input value={filters.location} onChange={update('location')} placeholder="Location" className="h-12 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]" />
+            <select value={filters.maxPrice} onChange={update('maxPrice')} className="h-12 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">Budget</option><option value="75000">Up to ₹75k</option><option value="150000">Up to ₹1.5L</option><option value="300000">Up to ₹3L</option><option value="50000000">Up to ₹5Cr</option></select>
+            <select value={filters.bhk} onChange={update('bhk')} className="h-12 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">BHK</option><option value="1">1 BHK</option><option value="2">2 BHK</option><option value="3">3 BHK</option><option value="4">4+ BHK</option></select>
+            <select value={filters.type} onChange={update('type')} className="h-12 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">Property Type</option><option value="Flat">Apartment</option><option value="PG">PG</option><option value="Single">Single Occupancy</option><option value="Shared">Shared Occupancy</option></select>
+            <select value={filters.furnishing} onChange={update('furnishing')} className="h-12 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">Furnishing</option><option>Semi-Furnished</option><option>Fully Furnished</option><option>Unfurnished</option></select>
+            <button className="h-12 rounded-md bg-stone-950 px-4 text-sm font-bold text-white transition hover:bg-[#C55F26]"><span className="inline-flex items-center gap-2"><SlidersHorizontal className="h-4 w-4" /> Apply</span></button>
           </div>
-          <button
-            onClick={handleClearFilters}
-            className="px-5 py-2.5 bg-[#12171A] hover:bg-[#B34728] text-white text-xs font-mono font-semibold uppercase tracking-wider rounded-sm transition-colors"
-          >
-            Clear All Filters
-          </button>
+          <div className="mt-3 grid gap-3 md:grid-cols-3">
+            <select value={filters.availability} onChange={update('availability')} className="h-11 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">Availability</option><option>Immediate</option><option>Ready to move</option><option>Next month</option></select>
+            {purpose === 'rent' ? <select value={filters.tenantPreference} onChange={update('tenantPreference')} className="h-11 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">Tenant Preference</option><option>Family</option><option>Working Professionals</option><option>Bachelors</option></select> : <select value={filters.area} onChange={update('area')} className="h-11 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">Area / Size</option><option>1000+ sq.ft.</option><option>2000+ sq.ft.</option><option>3000+ sq.ft.</option></select>}
+            {purpose === 'buy' && <select value={filters.possession} onChange={update('possession')} className="h-11 rounded-md border border-stone-200 bg-[#F7F3EC] px-3 text-sm outline-none focus:border-[#C55F26]"><option value="">Possession</option><option>Ready to move</option><option>Under construction</option></select>}
+          </div>
+        </form>
+
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <strong className="mr-2 text-stone-950">{loading ? 'Loading' : properties.length} results</strong>
+            <span className="rounded-full bg-white px-3 py-1 text-stone-600">{purpose === 'rent' ? 'For Rent' : 'For Sale'}</span>
+            {activeChips.map(([k, v]) => <span key={k} className="rounded-full bg-white px-3 py-1 text-stone-600">{v}</span>)}
+            {activeChips.length > 0 && <button onClick={clearFilters} className="text-xs font-bold uppercase tracking-wide text-[#C55F26]">Clear all</button>}
+          </div>
+          <span className="text-sm text-stone-500">Sort by: <strong className="text-stone-900">Recommended</strong></span>
         </div>
-      )}
+
+        {loading ? (
+          <div className="mt-8 grid gap-7 md:grid-cols-2 lg:grid-cols-3">{[1,2,3,4,5,6].map((i)=><div key={i} className="h-[520px] animate-pulse rounded-xl bg-white" />)}</div>
+        ) : error ? (
+          <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-12 text-center shadow-sm"><h3 className="font-display text-2xl font-bold">We couldn’t load properties right now.</h3><button onClick={loadListings} className="mt-5 rounded-md bg-stone-950 px-5 py-3 text-sm font-bold text-white">Try Again</button></div>
+        ) : properties.length ? (
+          <div className="mt-8 grid gap-7 md:grid-cols-2 lg:grid-cols-3">{properties.map((p)=><PropertyCard key={p._id || p.id} property={p} />)}</div>
+        ) : (
+          <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-12 text-center shadow-sm"><Search className="mx-auto h-10 w-10 text-[#C55F26]" /><h3 className="mt-4 font-display text-2xl font-bold">No properties match your search right now.</h3><p className="mt-2 text-stone-600">Clear filters or tell us what you need.</p><div className="mt-6 flex justify-center gap-3"><button onClick={clearFilters} className="rounded-md border border-stone-300 px-5 py-3 text-sm font-bold">Clear Filters</button><Link to="/feedback" className="rounded-md bg-[#C55F26] px-5 py-3 text-sm font-bold text-white">Tell Us What You Need</Link></div></div>
+        )}
+      </section>
     </div>
   );
 }

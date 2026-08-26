@@ -1,77 +1,55 @@
 import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { 
-  Menu, 
-  X, 
-  Building2, 
-  Phone, 
-  Compass, 
-  User, 
-  LayoutDashboard, 
-  ArrowRight,
-  ShieldCheck,
-  MessageSquare
-} from 'lucide-react';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Menu, X, User, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/eloraestate-logo.png';
 
-export default function PublicLayout({ children }) {
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'Properties', path: '/properties' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact', path: '/contact' },
+];
+
+function LogoMark({ dark = false }) {
+  return (
+    <Link to="/" className="flex items-center gap-2.5 group" aria-label="EloraEstate home">
+      <img src={logo} alt="EloraEstate" className="h-9 w-9 rounded-sm object-contain" />
+      <span className={`font-display text-xl font-bold tracking-tight ${dark ? 'text-white' : 'text-stone-950'}`}>
+        EloraEstate
+      </span>
+    </Link>
+  );
+}
+
+export default function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const navLinks = [
-    { name: 'Discover', path: '/properties', icon: Compass },
-    { name: 'About', path: '/about', icon: Building2 },
-    { name: 'Contact', path: '/contact', icon: Phone },
-    { name: 'Feedback', path: '/feedback', icon: MessageSquare },
-  ];
+  const dashboardPath = user?.role === 'admin'
+    ? '/admin/users'
+    : user?.role === 'broker'
+      ? '/dashboard'
+      : user?.role === 'owner_caretaker'
+        ? '/dashboard'
+        : '/dashboard';
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-[#12171A] font-sans antialiased selection:bg-[#B34728]/15 selection:text-[#94381C]">
-      {/* Top Advisory Bar */}
-      <div className="bg-[#12171A] text-[#E4E3DD] text-[11px] font-mono py-1.5 px-4 sm:px-6 border-b border-[#2A3138] flex items-center justify-between">
-        <div className="flex items-center gap-2 max-w-7xl mx-auto w-full justify-between">
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B] animate-pulse"></span>
-            Curated Mumbai Residential Rentals & Direct Broker Coordination
-          </span>
-          <div className="hidden sm:flex items-center gap-4 text-[#A6A49C]">
-            <a href="tel:+919820000000" className="hover:text-white transition-colors">Direct Desk: +91 (Mumbai)</a>
-            <span>•</span>
-            <Link to="/login" className="hover:text-amber-400 transition-colors">Owner / Agent Portal</Link>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col bg-[#F7F3EC] text-[#17120F] font-sans antialiased selection:bg-[#C9642A]/20 selection:text-[#7A2B12]">
+      <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-[#FDFBF7]/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <LogoMark />
 
-      {/* Main Sticky Header */}
-      <header className="sticky top-0 z-40 bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#E4E3DD] transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Brand Identity */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-sm bg-[#12171A] border border-[#B8860B]/40 flex items-center justify-center text-[#B8860B] font-serif text-xl font-bold shadow-sm transition-transform group-hover:scale-95">
-              E
-            </div>
-            <div className="flex flex-col">
-              <span className="font-serif text-2xl font-bold tracking-tight text-[#12171A] leading-none">
-                Elora<span className="text-[#B34728] font-normal italic">Estate</span>
-              </span>
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#7A7870] mt-1">
-                Mumbai Advisory
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden items-center gap-8 md:flex">
             {navLinks.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
+                end={link.path === '/'}
                 className={({ isActive }) =>
-                  `text-sm font-medium transition-all py-1.5 relative ${
-                    isActive
-                      ? 'text-[#12171A] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#B34728]'
-                      : 'text-[#5C5A52] hover:text-[#12171A]'
+                  `relative py-2 text-sm font-medium transition-colors ${
+                    isActive ? 'text-[#C55F26]' : 'text-stone-700 hover:text-stone-950'
                   }`
                 }
               >
@@ -80,172 +58,108 @@ export default function PublicLayout({ children }) {
             ))}
           </nav>
 
-          {/* Header Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              to="/properties"
-              className="px-4 py-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#12171A] hover:text-[#B34728] transition-colors"
-            >
-              Explore Homes
-            </Link>
+          <div className="hidden md:flex">
             {user ? (
-              <Link
-                to={user.role === 'admin' ? '/admin' : user.role === 'broker' ? '/broker' : user.role === 'owner' ? '/owner' : '/dashboard'}
-                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider rounded-sm bg-[#12171A] text-[#B8860B] hover:bg-[#1C2227] border border-[#B8860B]/30 transition-all shadow-sm"
+              <button
+                type="button"
+                onClick={() => navigate(dashboardPath)}
+                className="inline-flex items-center gap-2 rounded-md bg-stone-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C55F26]"
               >
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                <span>Dashboard</span>
-              </Link>
+                <LayoutDashboard className="h-4 w-4" />
+                Dashboard
+              </button>
             ) : (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider rounded-sm bg-[#12171A] text-white hover:bg-[#B34728] transition-all shadow-sm"
+                className="inline-flex items-center gap-2 rounded-md bg-[#C55F26] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#A94719]"
               >
-                <User className="w-3.5 h-3.5 text-[#B8860B]" />
-                <span>Client Access</span>
+                <User className="h-4 w-4" />
+                Login
               </Link>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center">
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-sm text-[#12171A] hover:bg-[#F3F2EE] focus:outline-none focus:ring-2 focus:ring-[#B34728]"
-              aria-expanded={mobileMenuOpen}
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-stone-200 bg-white text-stone-900 md:hidden"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-public-menu"
+            aria-label="Toggle navigation"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
 
-        {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden fixed inset-x-0 top-[113px] bg-[#FFFFFF] border-b border-[#E4E3DD] shadow-2xl px-6 pt-4 pb-8 flex flex-col gap-3 z-50 animate-fadeIn">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              return (
+          <div id="mobile-public-menu" className="border-t border-stone-200 bg-[#FDFBF7] px-4 py-4 shadow-xl md:hidden">
+            <div className="space-y-2">
+              {navLinks.map((link) => (
                 <NavLink
                   key={link.path}
                   to={link.path}
+                  end={link.path === '/'}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center justify-between px-4 py-3.5 rounded-sm text-sm font-medium transition-colors ${
-                      isActive 
-                        ? 'bg-[#F3F2EE] text-[#B34728] font-semibold border-l-2 border-[#B34728]' 
-                        : 'text-[#3B3A36] hover:bg-[#FBFBF9]'
-                    }`
+                    `block rounded-md px-3 py-3 text-sm font-semibold ${isActive ? 'bg-[#F2E8DB] text-[#C55F26]' : 'text-stone-800 hover:bg-white'}`
                   }
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-[#B8860B]" />
-                    <span>{link.name}</span>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 opacity-40" />
+                  {link.name}
                 </NavLink>
-              );
-            })}
-            <div className="pt-4 border-t border-[#E4E3DD] mt-2 space-y-2">
+              ))}
               <Link
-                to="/properties"
+                to={user ? dashboardPath : '/login'}
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-sm bg-[#B34728] text-white font-mono text-xs uppercase tracking-wider font-semibold shadow-sm"
+                className="mt-3 flex items-center justify-center rounded-md bg-[#C55F26] px-4 py-3 text-sm font-semibold text-white"
               >
-                Browse All Properties
+                {user ? 'Dashboard' : 'Login'}
               </Link>
-              {user ? (
-                <Link
-                  to="/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-sm bg-[#12171A] text-[#B8860B] font-mono text-xs uppercase tracking-wider font-semibold"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Account Dashboard
-                </Link>
-              ) : (
-                <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-sm bg-[#12171A] text-white font-mono text-xs uppercase tracking-wider font-semibold"
-                >
-                  <User className="w-4 h-4 text-[#B8860B]" />
-                  Sign In / Register
-                </Link>
-              )}
             </div>
           </div>
         )}
       </header>
 
-      {/* Main Body */}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1"><Outlet /></main>
 
-      {/* Footer */}
-      <footer className="bg-[#12171A] text-[#A6A49C] text-sm border-t border-[#2A3138]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
-          <div className="space-y-4 md:col-span-1">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-sm bg-[#B8860B]/10 border border-[#B8860B]/30 text-[#B8860B] font-serif font-bold flex items-center justify-center text-base">
-                E
-              </div>
-              <span className="font-serif text-xl font-bold tracking-tight text-white">
-                Elora<span className="text-[#B34728] font-normal italic">Estate</span>
-              </span>
-            </div>
-            <p className="text-xs text-[#8A8880] leading-relaxed">
-              Curated residential rental advisory operating across South Mumbai and prime micro-markets. Dedicated visit coordination and transparent broker linkages.
+      <footer className="bg-[#0E1728] text-stone-300">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
+          <div className="space-y-4">
+            <LogoMark dark />
+            <p className="max-w-xs text-sm leading-6 text-stone-400">
+              Mumbai residential rentals and flats for sale, organized around a clearer property search journey.
             </p>
-            <div className="pt-2 text-[11px] font-mono text-[#B8860B]">
-              Mumbai, Maharashtra, India
-            </div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[#D8A95A]">Mumbai, Maharashtra</p>
           </div>
-
           <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-white mb-4 font-semibold">
-              Explore Mumbai
-            </h4>
-            <ul className="space-y-2.5 text-xs">
-              <li><Link to="/properties?location=Worli" className="hover:text-[#B8860B] transition-colors">Worli Residences</Link></li>
-              <li><Link to="/properties?location=Lower+Parel" className="hover:text-[#B8860B] transition-colors">Lower Parel High-Rises</Link></li>
-              <li><Link to="/properties?location=Prabhadevi" className="hover:text-[#B8860B] transition-colors">Prabhadevi Towers</Link></li>
-              <li><Link to="/properties?location=Colaba" className="hover:text-[#B8860B] transition-colors">Colaba & Heritage Belt</Link></li>
-              <li><Link to="/properties?location=Bandra" className="hover:text-[#B8860B] transition-colors">Bandra West Living</Link></li>
+            <h4 className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-white">Explore</h4>
+            <ul className="space-y-3 text-sm text-stone-400">
+              <li><Link to="/properties" className="hover:text-white">Properties</Link></li>
+              <li><Link to="/properties?purpose=rent" className="hover:text-white">Rent</Link></li>
+              <li><Link to="/properties?purpose=buy" className="hover:text-white">Buy</Link></li>
             </ul>
           </div>
-
           <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-white mb-4 font-semibold">
-              Platform & Process
-            </h4>
-            <ul className="space-y-2.5 text-xs">
-              <li><Link to="/properties" className="hover:text-[#B8860B] transition-colors">All Rental Listings</Link></li>
-              <li><Link to="/about" className="hover:text-[#B8860B] transition-colors">About Our Platform</Link></li>
-              <li><Link to="/contact" className="hover:text-[#B8860B] transition-colors">Direct Desk & Coordination</Link></li>
-              <li><Link to="/feedback" className="hover:text-[#B8860B] transition-colors">Submit Experience Feedback</Link></li>
+            <h4 className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-white">Company</h4>
+            <ul className="space-y-3 text-sm text-stone-400">
+              <li><Link to="/about" className="hover:text-white">About</Link></li>
+              <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
+              <li><Link to="/feedback" className="hover:text-white">Feedback</Link></li>
             </ul>
           </div>
-
           <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-white mb-4 font-semibold">
-              Client & Owner Desk
-            </h4>
-            <p className="text-xs text-[#8A8880] leading-relaxed mb-3">
-              Are you a property owner or authorized broker managing prime Mumbai inventory?
-            </p>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#B8860B] hover:text-white transition-colors"
-            >
-              <span>Access Owner / Broker Workspace</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
+            <h4 className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-white">Account</h4>
+            <ul className="space-y-3 text-sm text-stone-400">
+              <li><Link to="/login?mode=user" className="hover:text-white">User Login</Link></li>
+              <li><Link to="/login?mode=agent" className="hover:text-white">Agent Login</Link></li>
+              <li><Link to="/login?mode=agent" className="hover:text-white">Owner/Caretaker Login</Link></li>
+            </ul>
           </div>
         </div>
-
-        <div className="border-t border-[#1C2227] py-6 text-center text-xs font-mono text-[#5C5A52]">
-          © {new Date().getFullYear()} EloraEstate. Curated Mumbai Property Discovery. All rights reserved.
+        <div className="border-t border-white/10 py-5">
+          <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 text-xs text-stone-500 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+            <span>© EloraEstate. All rights reserved.</span>
+            <span>Public property details only. Private owner data is protected.</span>
+          </div>
         </div>
       </footer>
     </div>

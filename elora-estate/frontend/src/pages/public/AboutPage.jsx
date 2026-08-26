@@ -1,167 +1,57 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Building2, 
-  Compass, 
-  ShieldCheck, 
-  CalendarDays, 
-  KeyRound, 
-  MapPin, 
-  ArrowRight,
-  CheckCircle2
-} from 'lucide-react';
+import { Building2, CalendarDays, CheckCircle2, Compass, Heart, Home, MapPin, UsersRound } from 'lucide-react';
+
+const services = [
+  ['Residential Rentals', 'Curated rental options across Mumbai residential pockets.', Home],
+  ['Flats for Sale / Resale', 'Available residential flats and resale opportunities.', Building2],
+  ['Property Discovery', 'Search by location, budget, BHK and property type.', Compass],
+  ['Shortlisting', 'Keep suitable options organized in one place.', Heart],
+  ['Visit Coordination', 'Plan visits with clearer broker coordination.', CalendarDays],
+  ['Broker Support', 'Human support for property questions and next steps.', UsersRound],
+  ['Owner/Caretaker Coordination', 'Support availability and visit planning.', CheckCircle2],
+  ['Clear Property Information', 'Useful public details before scheduling visits.', MapPin],
+];
 
 export default function AboutPage() {
-  const values = [
-    {
-      title: 'Scattered Search Solved',
-      desc: 'Mumbai rentals are notorious for splintering across multiple WhatsApp chats, random phone calls, and redundant listings. We consolidate the entire discovery-to-visit workflow under one clear platform.',
-      icon: Compass,
-    },
-    {
-      title: 'Direct Broker Coordination',
-      desc: 'We connect prospective tenants directly to the authorized managing broker for each listing. No multi-tier intermediation or unverified third-party calls.',
-      icon: KeyRound,
-    },
-    {
-      title: 'Transparent Terms Upfront',
-      desc: 'Monthly rent, security deposit terms, furnishing state, and availability timelines are clearly stated before you ever take time out to visit.',
-      icon: ShieldCheck,
-    },
-    {
-      title: 'Structured Site Viewings',
-      desc: 'Book single visits or organize batch neighborhood lineups directly through your portal without endless coordination friction.',
-      icon: CalendarDays,
-    },
-  ];
-
-  const microMarkets = [
-    'Worli & Lower Parel (High-Rise Corridors)',
-    'Prabhadevi & Dadar (Central Coastal Belt)',
-    'Colaba, Cuffe Parade & Churchgate (Heritage South)',
-    'Mahalaxmi & Byculla (Emerging Luxury Clusters)',
-    'Bandra West & Khar (Prime Western Suburbs)',
-  ];
-
   return (
-    <div className="space-y-16 sm:space-y-24 pb-20">
-      {/* Editorial Hero */}
-      <section className="relative bg-[#12171A] text-white pt-16 pb-20 px-4 sm:px-6 lg:px-8 border-b border-[#2A3138]">
-        <div className="max-w-4xl mx-auto text-center space-y-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border border-[#B8860B]/40 bg-[#B8860B]/10 text-[#B8860B] text-xs font-mono tracking-wider uppercase">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>The EloraEstate Standard</span>
-          </div>
+    <div className="bg-[#F7F3EC]">
+      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className="flex flex-col justify-center">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[#C55F26]">About EloraEstate</p>
+          <h1 className="font-display text-5xl font-black leading-tight text-stone-950">Built for how Mumbai property search actually works.</h1>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-stone-600">EloraEstate helps bring property discovery, shortlisting and visit coordination into one clearer flow.</p>
+          <div className="mt-7 flex gap-3"><Link to="/properties" className="rounded-md bg-[#C55F26] px-5 py-3 text-sm font-bold text-white">Start Your Search</Link><Link to="/contact" className="rounded-md border border-stone-300 px-5 py-3 text-sm font-bold text-stone-900">Contact</Link></div>
+        </div>
+        <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1200&q=85" alt="Mumbai residential apartment" className="h-full min-h-[420px] rounded-2xl object-cover shadow-xl" />
+      </section>
 
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-            Built for how Mumbai actually <br className="hidden sm:inline" />
-            <span className="text-[#B8860B] italic font-normal">searches for residential homes.</span>
-          </h1>
-
-          <p className="max-w-2xl mx-auto text-[#A6A49C] text-sm sm:text-base leading-relaxed">
-            EloraEstate was created around a simple reality: finding a home in Mumbai is exciting, but navigating scattered broker networks and fragmented listings shouldn’t be chaotic.
-          </p>
+      <section className="bg-[#EEE8DF] py-16">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.7fr_1fr] lg:px-8">
+          <h2 className="font-display text-3xl font-bold">Why EloraEstate exists</h2>
+          <p className="text-lg leading-9 text-stone-700">Mumbai property search becomes messy when listings, calls, WhatsApp messages, photos, shortlists and visits all happen separately. EloraEstate was created to make that journey more organized — from discovery to visit coordination.</p>
         </div>
       </section>
 
-      {/* Narrative & Focus */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
-          <div className="md:col-span-5 space-y-3">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#B8860B] font-semibold">
-              Our Positioning
-            </span>
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#12171A]">
-              Curated Discovery Meets Structured Coordination.
-            </h2>
-            <p className="text-xs font-mono text-[#7A7870]">
-              Focusing on South Mumbai and prime micro-markets.
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="text-center"><h2 className="font-display text-3xl font-bold">What EloraEstate helps with</h2><p className="mt-2 text-stone-600">Practical support for renters, buyers, owners, caretakers and brokers.</p></div>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{services.map(([title, copy, Icon]) => <div key={title} className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm"><Icon className="h-5 w-5 text-[#C55F26]" /><h3 className="mt-4 font-bold text-stone-950">{title}</h3><p className="mt-2 text-sm leading-6 text-stone-600">{copy}</p></div>)}</div>
+      </section>
 
-          <div className="md:col-span-7 space-y-4 text-xs sm:text-sm text-[#5C5A52] leading-relaxed">
-            <p>
-              Traditional real estate portals are built as noisy advertisement boards where stale inventory competes for attention. EloraEstate operates differently: as a dedicated residential discovery and visit coordination layer.
-            </p>
-            <p>
-              Whether you are an executive relocating near Mumbai’s central business districts or a family seeking an established neighborhood in South Mumbai, our focus is giving you verified property parameters, predictable schedules, and respectful broker communication.
-            </p>
-          </div>
+      <section className="bg-[#111111] py-16 text-white">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+          <div><h2 className="font-display text-4xl font-bold">Our principled approach to your next home.</h2><div className="mt-8 grid gap-5 sm:grid-cols-2">{['Clear information','Mumbai locality focus','Human assistance','Organized shortlists','Practical visits','Zero confusion'].map((v, i) => <div key={v} className="flex gap-3"><span className="text-[#D8A95A]">0{i+1}</span><p className="text-stone-300">{v}</p></div>)}</div></div>
+          <blockquote className="rounded-2xl border border-white/10 bg-white/5 p-8 font-display text-2xl italic leading-10 text-stone-200">Real estate in Mumbai is not about finding a listing. It is about finding your place in the city.</blockquote>
         </div>
       </section>
 
-      {/* Pillars Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 text-center max-w-2xl mx-auto">
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#12171A]">Core Platform Commitments</h2>
-          <p className="text-xs font-mono text-[#7A7870] mt-1">Practical value engineered into every step of your search</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {values.map((v) => {
-            const Icon = v.icon;
-            return (
-              <div
-                key={v.title}
-                className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E4E3DD] shadow-sm flex flex-col justify-between"
-              >
-                <div>
-                  <div className="w-10 h-10 rounded-sm bg-[#F3F2EE] border border-[#E4E3DD] text-[#B8860B] flex items-center justify-center mb-4">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-[#12171A] mb-2">{v.title}</h3>
-                  <p className="text-xs text-[#5C5A52] leading-relaxed">{v.desc}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <h2 className="text-center font-display text-3xl font-bold">Who EloraEstate serves</h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-5">{['Tenants','Buyers','Owners','Caretakers','Brokers'].map((role) => <div key={role} className="rounded-xl border border-stone-200 bg-white p-5 text-center font-semibold shadow-sm">{role}</div>)}</div>
       </section>
 
-      {/* Micro-Markets Covered */}
-      <section className="bg-[#F3F2EE] py-14 px-4 sm:px-6 lg:px-8 border-y border-[#E4E3DD]">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="font-serif text-2xl font-bold text-[#12171A]">Active Micro-Markets</h2>
-            <p className="text-xs font-mono text-[#7A7870] mt-1">Core coverage across Greater Mumbai and South Mumbai</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {microMarkets.map((market, idx) => (
-              <div
-                key={idx}
-                className="bg-[#FFFFFF] p-3.5 rounded-sm border border-[#E4E3DD] flex items-center gap-2.5 text-xs text-[#3B3A36]"
-              >
-                <MapPin className="w-4 h-4 text-[#B8860B] shrink-0" />
-                <span className="font-medium">{market}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Conversion Banner */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#12171A] rounded-sm p-8 sm:p-10 text-white border border-[#B8860B]/30 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-          <div className="space-y-2">
-            <h3 className="font-serif text-xl sm:text-2xl font-bold">Ready to discover your next home?</h3>
-            <p className="text-xs text-[#A6A49C]">Explore curated rental properties or get in touch with our desk.</p>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/properties"
-              className="px-5 py-2.5 bg-[#B34728] hover:bg-[#94381C] text-white text-xs font-mono font-semibold uppercase tracking-wider rounded-sm transition-colors"
-            >
-              Browse Listings
-            </Link>
-            <Link
-              to="/contact"
-              className="px-5 py-2.5 bg-[#F3F2EE] hover:bg-[#E4E3DD] text-[#12171A] text-xs font-mono font-semibold uppercase tracking-wider rounded-sm transition-colors"
-            >
-              Contact Desk
-            </Link>
-          </div>
-        </div>
+      <section className="bg-[#FFFDF8] py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><div className="flex items-center justify-between gap-6"><div><h2 className="font-display text-3xl font-bold">Mumbai focus</h2><p className="mt-2 text-stone-600">Worli, Lower Parel, Prabhadevi, Dadar, Mahalaxmi, Byculla, Colaba, Cuffe Parade, Churchgate, Marine Drive and Malabar Hill.</p></div><Link to="/properties" className="hidden rounded-md bg-[#C55F26] px-5 py-3 text-sm font-bold text-white sm:inline-flex">View Properties</Link></div></div>
       </section>
     </div>
   );
